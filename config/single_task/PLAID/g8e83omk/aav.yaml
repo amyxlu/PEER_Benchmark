@@ -1,0 +1,38 @@
+dataset:
+  atom_feature: null
+  bond_feature: null
+  class: AAV
+  keep_mutation_region: true
+  path: /homefs/home/lux70/storage/data/torchdrug
+  transform:
+    class: Compose
+    transforms:
+    - class: ProteinView
+      view: residue
+engine:
+  batch_size: 64
+  gpus:
+  - 0
+  logger: wandb
+eval_metric: spearmanr
+fix_encoder: true
+optimizer:
+  class: Adam
+  lr: 1.0e-05
+output_dir: /homefs/home/lux70/storage/data/torchdrug/outputs
+task:
+  class: PropertyPrediction
+  criterion: mse
+  metric:
+  - mae
+  - rmse
+  - spearmanr
+  mlp_hidden_multiple: 1
+  model:
+    class: PLAID
+    compression_model_id: g8e83omk
+    hourglass_weights_dir: /homefs/home/lux70/storage/plaid/checkpoints/hourglass_vq
+  normalization: false
+  num_mlp_layer: 2
+train:
+  num_epoch: 100

@@ -42,8 +42,9 @@ optimizer:
 fix_encoder: True
 
 engine:
-  gpus: [0, 1, 2, 3]
-  batch_size: 32
+  gpus: [0]
+  batch_size: 64 
+  logger: "wandb"
 
 train:
-  num_epoch: 100
+  num_epoch: 150

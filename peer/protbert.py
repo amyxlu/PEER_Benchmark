@@ -86,8 +86,32 @@ class ProtBert(nn.Module, core.Configurable):
         residue_feature = residue_feature[mask]
         if self.readout:
             graph_feature = self.readout(graph, residue_feature)
-
+        import pdb;pdb.set_trace()
         return {
             "graph_feature": graph_feature,
             "residue_feature": residue_feature
         }
+
+
+if __name__ == "__main__":
+    model = ProtBert(".")
+    from torchdrug import datasets, transforms, tasks, core
+    import torch
+
+    truncate_transform = transforms.TruncateProtein(max_length=200, random=False)
+    protein_view_transform = transforms.ProteinView(view="residue")
+    transform = transforms.Compose([truncate_transform, protein_view_transform])
+    
+    dataset = datasets.BetaLactamase("~/storage/data/torchdrug", atom_feature=None, bond_feature=None, residue_feature="default", transform=transform)
+    train_set, valid_set, test_set = dataset.split()
+    task = tasks.PropertyPrediction(model, task=dataset.tasks,
+                                    criterion="mse", metric=("mae", "rmse", "spearmanr"),
+                                    normalization=False, num_mlp_layer=2)
+
+    optimizer = torch.optim.Adam(task.parameters(), lr=1e-4)
+    solver = core.Engine(task, train_set, valid_set, test_set, optimizer, 
+                         gpus=[0], batch_size=64)
+    solver.train(num_epoch=10)
+    solver.evaluate("valid")
+
+

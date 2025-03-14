@@ -1,0 +1,15 @@
+name: torchdrug
+channels:
+  - nvidia
+  - conda-forge
+  - pytorch
+  - default
+dependencies:
+  - python==3.10
+  - pip
+  - gcc
+  - cuda-toolkit
+  - pytorch
+  - pytorch-cuda=12.1
+  - pip:
+    - -r requirements.txt
